@@ -1,0 +1,32 @@
+// 백준 2789 : 블랙잭
+#include <vector>
+#include <string>
+#include <iostream>
+
+using namespace std;
+
+int solution(int n, int m, vector<int> cards) {
+	int answer = 0;
+	// 3장의 카드를 택한다.
+	for (int i = 0; i < n; i++) {
+		for (int j = i+1; j < n; j++) {
+			for (int k = j+1; k < n; k++) {
+				int tmp = cards[i] + cards[j] + cards[k];
+				if (tmp <= m && tmp > answer) answer = tmp;
+			}
+		}
+	}
+	return answer;
+}
+
+int main() {
+	int n, m;
+	cin >> n >> m;
+	vector<int> cards;
+	for (int i = 0; i < n; i++) {
+		int number;
+		cin >> number;
+		cards.push_back(number);
+	}
+	cout << solution(n, m, cards) << endl;
+}
