@@ -1,0 +1,30 @@
+// 백준 2231 : 분해합 (99는 117의 생성자 -> 99 + 9 + 9)
+#include <vector>
+#include <string>
+#include <iostream>
+
+using namespace std;
+
+int main() {
+	int n;
+	cin >> n;
+
+	for (int m = 1; m < n; m++) {
+		int checking = 0;
+		checking += m;
+
+		int tmp = m;
+		while (tmp != 0) {
+			checking += tmp % 10;
+			tmp /= 10;
+		}
+
+		if (checking == n) {
+			cout << m << endl;
+			return 0;
+		}
+	}
+
+	cout << 0 << endl;
+	return 0;
+}
