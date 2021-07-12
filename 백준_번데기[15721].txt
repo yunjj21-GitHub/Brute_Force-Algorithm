@@ -1,0 +1,44 @@
+// 백준 15721 : 번데기
+#include <vector>
+#include <string>
+#include <iostream>
+
+using namespace std;
+
+int main() {
+	int A, T, chant; // 게임 참여자 수 A, 구하고자 하는 번쨰 T, 구하고자 하는 구호 chant
+	cin >> A >> T >> chant;
+
+	int n = 0; // 진행중인 게임의 횟차
+	int turn = -1; // 게임 참여자 중 누구의 순서인지를 저장
+	vector<int> count = { 0, 0 };
+	while (1) {
+		n++;
+
+		for (int i = 0; i < 2; i++) { // '번 - 데기'를 2회 반복
+			for (int j = 0; j < 2; j++) { // 번 -> 데기
+				turn++;
+				turn %= A;
+
+				count[j]++;
+				if (count[chant] == T) {
+					cout << turn << endl;
+					return 0;
+				}
+			}
+		}
+
+		for (int i = 0; i < 2; i++) { // 번 -> 데기
+			for (int j = 0; j <= n; j++) { // 각 구호를 진행횟차+1회 씩 외치도록 함
+				turn++;
+				turn %= A;
+
+				count[i]++;
+				if (count[chant] == T) {
+					cout << turn << endl;
+					return 0;
+				}
+			}
+		}
+	}
+}
