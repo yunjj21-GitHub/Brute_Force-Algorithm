@@ -1,0 +1,50 @@
+// 백준 2503 : 숫자 야구
+#include <vector>
+#include <string>
+#include <iostream>
+
+using namespace std;
+
+int main() {
+	int n; // 질문의 횟수 n
+	cin >> n;
+
+	// 문답에 대한 정보를 저장
+	string *num = new string[n]; 
+	int *strike = new int[n];
+	int *ball = new int[n];
+	for (int i = 0; i < n; i++) {
+		cin >> num[i] >> strike[i] >> ball[i];
+	}
+
+	// 가능성이 있는 답의 개수를 구함
+	int answer = 0;
+	for (int a = 1; a <= 9; a++) { // 세자리수의 각 자리는 1~9까지만 가능
+		for (int b = 1; b <= 9; b++) {
+			for (int c = 1; c <= 9; c++) {
+				if (a == b || a == c || b == c) continue; // 각 자리수는 서로 다른 수로 구성되어야 함
+
+				int cnt = 0; // 현재 확인 중인 수와 문답의 일치 횟수
+				string tmp = to_string(a) + to_string(b) + to_string(c); // 현재 확인 중인 수
+
+				for (int i = 0; i < n; i++) { // 현재 확인 중인 수와 n개의 문답을 비교
+					// 스트라이크 검사
+					int cnt_strike = 0;
+					for (int j = 0; j < 3; j++) {
+						if (tmp[j] == num[i][j]) cnt_strike++;
+					}
+
+					// 볼 검사
+					int cnt_ball = 0;
+					if (tmp[0] == num[i][1] || tmp[0] == num[i][2]) cnt_ball++;
+					if (tmp[1] == num[i][0] || tmp[1] == num[i][2]) cnt_ball++;
+					if (tmp[2] == num[i][0] || tmp[2] == num[i][1]) cnt_ball++;
+
+					if (cnt_strike == strike[i] && cnt_ball == ball[i]) cnt++;
+				}
+				if (cnt == n) answer++;
+			}
+		}
+	}
+	cout << answer << endl; // 답안 출력
+}
