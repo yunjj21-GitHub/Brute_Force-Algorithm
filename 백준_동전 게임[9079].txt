@@ -1,0 +1,72 @@
+// 백준 9079 : 동전 게임 (비트연산 + BFS(완전탐색))
+#include <vector>
+#include <string>
+#include <queue>
+#include <iostream>
+
+using namespace std;
+
+// cases : 비트롤 표현된 동전을 뒤집을 수 있는 경우의 수를 정수로 저장
+// 뒤집어야 하는 동전을 1로 표현 (0 XOR 1 = 1, 1 XOR 1 = 0)
+int cases[8] = { 7, 56, 448, 73, 146, 292, 273, 84 };
+
+int makeBit(string s) {
+	int bits = 0; // bitset<9>(bit) : 000000000
+	for (int i = 8; i >= 0; i--) {
+		bits <<= 1; // bits의 모든 비트를 1비트씩 왼쪽으로 이동 (0비트 삽입)
+		if (s[i] == 'H') {
+			// bitset<9>(1) : 000000001
+			bits |= 1; // bits와 1을 OR연산 (s[i] == 'H'일 경우 위에 삽입된 0이 1로 변경)
+		}
+	}
+	return bits; // bits는 int형으로 10진수 값이 반환된다.
+}
+
+int main() {
+	int T;
+	cin >> T;
+
+	while (T--) {
+		string coin = "";
+		for (int i = 0; i < 9; i++) {
+			char ch;
+			coin += ch;
+		}
+		int bits = makeBit(coin); // H와 T로 입력된 동전의 상태를 0과 1로 바꾸어 줌
+
+		bool pastState[512] = { false }; // 이전에 나왔던 동전 상태인지를 기억(반환은 정수형)
+		int answer = -1;
+
+		queue<int> q;
+		q.push(bits); // 정수형의 동전 상태가 들어감 
+		pastState[bits] = true;
+
+		bool flag = true;
+		while (!q.empty() && flag) {
+			int qSize = q.size();
+			answer++;
+
+			while (qSize--) {
+				int cur = q.front(); // cur : 현재의 동전 상태를 저장
+				q.pop();
+
+				if (cur == 0 || cur == (1 << 9) - 1) { // bitset<9>((1 << 9) - 1) : 111111111
+					// cur == 0 : 모든 동전이 H일 때
+					// cur == (1 << 9) - 1 : 모든 동전이 T일 때
+					flag = false;
+					break;
+				}
+
+				for (int flip : cases) { 
+					int nextState = cur ^ flip; 
+					if (pastState[nextState]) continue;
+					pastState[nextState] = true;
+					q.push(nextState);
+				}
+			}
+		}
+
+		if (flag) answer = -1;
+		else cout << answer << endl;
+	}
+}
