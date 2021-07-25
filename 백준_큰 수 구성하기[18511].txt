@@ -1,0 +1,43 @@
+// 백준 18511 : 큰 수 구성하기
+#include <vector>
+#include <string>
+#include <iostream>
+
+using namespace std;
+
+string n;
+int k;
+vector<char> num(3); // k개의 원소를 저장
+string s_tmp= ""; // k의 원소들로만 구성된 자연수의 모든 경우의 수를 임시 저장
+int answer = 0; // 답안
+
+void constructNum(int digits) {
+	// digits : 현재 설정해야 하는 자릿수
+	if (digits > 0) { 
+		int tmp = stoi(s_tmp.substr(0, digits));
+		if (tmp <= stoi(n) && tmp > answer) answer = tmp;
+
+		if (digits == n.size()) return;
+	}
+
+	for (int i = 0; i < k; i++) {
+		s_tmp[digits] = num[i];
+		constructNum(digits + 1);
+	}
+}
+
+int main() {
+	cin >> n >> k; // n과 k를 입력받음
+	for (int i = 0; i < k; i++) { // k개의 원소를 입력 받음
+		cin >> num[i];
+	}
+
+	for (int i = 0; i < n.size(); i++) { // n의 자릿수 만큼 s_tmp를 초기화
+		s_tmp += "0";
+	}
+
+	constructNum(0); 
+
+	// 답안 출력
+	cout << answer << endl;
+}
