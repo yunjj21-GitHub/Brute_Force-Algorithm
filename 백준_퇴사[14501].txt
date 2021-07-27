@@ -1,0 +1,44 @@
+// 백준 14501 : 퇴사
+#include <vector>
+#include <string>
+#include <iostream>
+
+using namespace std;
+
+int n; // 퇴사하려는 날짜
+vector<pair<int, int>> calendar(16); // 사용할 인덱스 : 1~15
+int maxProfit = 0; // 얻을 수 있는 최대 수익
+
+void chooseWork(int work, int profit) {
+	// work : 일을 시작하는 날이자, 일에 대한 정보를 담고 있는 벡터의 인덱스
+	int endDate = work + calendar[work].first - 1;
+
+	if (endDate <= n) { // 퇴사날까지 끝나는 일이라면
+		profit += calendar[work].second;
+	}
+	
+	if (endDate > n || endDate == n) {
+		// 퇴사날까지 끝나지 못하거나 더이상 남은 일이 없다면
+		maxProfit = maxProfit < profit ? profit : maxProfit;
+	}
+
+	// 다음 할 일을 선택
+	for (int i = endDate + 1; i <= n; i++) {
+		chooseWork(i, profit);
+	}
+}
+
+int main() {
+	cin >> n;
+	for (int i = 1; i <= n; i++) {
+		cin >> calendar[i].first; // time
+		cin >> calendar[i].second; // price
+	}
+
+	// 퇴사 전까지 일할 수 있는 모든 경우의 수를 구함
+	for (int i = 1; i <= n; i++) {
+		chooseWork(i, 0);
+	}
+
+	cout << maxProfit << endl;
+}
