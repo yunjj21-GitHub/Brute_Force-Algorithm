@@ -1,0 +1,108 @@
+// 백준 2615 : 오목
+#include <vector>
+#include <string>
+#include <iostream>
+
+using namespace std;
+
+int board[19][19];
+
+bool checkVertical(int target, int y, int x){
+	if ((y + 5 < 19 && board[y + 5][x] == target) || (y - 1 >= 0 && board[y - 1][x] == target)) return 0;
+
+	int cnt = 0;
+	for (int i = 0; i < 5; i++) {
+		int nextY = y + i;
+		if (nextY < 19 && board[nextY][x] == target) {
+			cnt++;
+		}
+		else {
+			break;
+		}
+	}
+	if (cnt == 5) return 1;
+	return 0;
+}
+
+bool checkHorizontal(int target, int y, int x) {
+	if ((x + 5 < 19 && board[y][x + 5] == target) || (x - 1 >= 0 && board[y][x - 1] == target)) return 0;
+
+	int cnt = 0;
+	for (int i = 0; i < 5; i++) {
+		int nextX = x + i;
+		if (nextX < 19 && board[y][nextX] == target) {
+			cnt++;
+		}
+		else {
+			break;
+		}
+	}
+	if (cnt == 5) return 1;
+	return 0;
+}
+
+bool checkDiagona_right(int target, int y, int x) {
+	if ((x + 5 < 19 && y+5 <19 && board[y+5][x + 5] == target) || (x - 1 >= 0 && y-1 >=0 && board[y-1][x - 1] == target)) return 0;
+
+	int cnt = 0;
+	for (int i = 0; i < 5; i++) {
+		int nextY = y + i;
+		int nextX = x + i;
+		if ((nextY < 19 && nextX < 19) && board[nextY][nextX] == target) {
+			cnt++;
+		}
+		else {
+			break;
+		}
+	}
+	if (cnt == 5) return 1;
+	return 0;
+}
+
+bool checkDiagona_left(int target, int y, int x) {
+	if ((x - 5 >=0 && y + 5 < 19 && board[y + 5][x - 5] == target) || (x + 1 <19 && y - 1 >= 0 && board[y - 1][x + 1] == target)) return 0;
+
+	int cnt = 0;
+	for (int i = 0; i < 5; i++) {
+		int nextY = y + i;
+		int nextX = x - i;
+		if ((nextY <19 && nextX >=0) && board[nextY][nextX] == target) {
+			cnt++;
+		}
+		else {
+			break;
+		}
+	}
+	if (cnt == 5) return 1;
+	return 0;
+}
+
+int main() {
+	for (int i = 0; i < 19; i++) {
+		for (int j = 0; j < 19; j++) {
+			cin >> board[i][j];
+		}
+	}
+
+	for (int y = 0; y < 19; y++) {
+		for (int x = 0; x < 19; x++) {
+			int target;
+			if (board[y][x] != 0) {
+				target = board[y][x];
+
+				if (checkVertical(target, y, x) || checkHorizontal(target, y, x) || checkDiagona_right(target, y, x)) {
+					cout << target << '\n';
+					cout << y + 1 << " " << x + 1 << '\n';
+					return 0;
+				}
+				else if (checkDiagona_left(target, y, x)) { // 주의! 연속한 5개의 바둑돌의 시작 좌표를 출력하는 것이 아니라, 가장 왼쪽에 있는 좌표를 출력하는 것이다.
+					cout << target << '\n';
+					cout << (y +4)+1 << " " << (x-4)+1 << '\n';
+					return 0;
+				}
+			}
+		}
+	}
+	cout << 0 << '\n';
+	return 0;
+}
