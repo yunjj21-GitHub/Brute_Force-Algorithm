@@ -1,0 +1,76 @@
+// 백준 16508 : 전공책
+#include <vector>
+#include <string>
+#include <iostream>
+
+using namespace std;
+
+string target; // 만들고자 하는 문자열
+int n; // 책의 개수
+int price[16]; // 각 책의 가격 (최대 책의 개수 : 16)
+string name; // 각 책의 이름
+// 알파벳의 개수 : 26
+int required_al[26]; // 만들고자 하는 문자열에 포함된 문자를 저장
+int name_al[16][26]; // 각 책 이름에 포함된 문자를 저장
+
+bool sel[16]; // 각 책이 선택되었는지를 저장
+int answer = 2e9;
+
+void back(int x, int cnt, int sum) {
+    int zero = 0;
+    for (int i = 0; i < 26; i++) {
+        required_al[i] -= name_al[x][i];
+
+        if (required_al[i] <= 0) zero++;
+    }
+
+    sum += price[x];
+    sel[x] = true;
+
+    // 만들고자 하는 문자열의 모든 문자를 찾았다면
+    if (zero == 26) {
+        answer = min(answer, sum);
+
+        for (int i = 0; i < 26; i++) {
+            required_al[i] += name_al[x][i];
+        }
+        sel[x] = false;
+        return;
+    }
+
+    for (int i = x + 1; i < n; i++) {
+        back(i, cnt + 1, sum);
+    }
+
+    // 원상복귀
+    for (int i = 0; i < 26; i++) {
+        required_al[i] += name_al[x][i];
+    }
+    sel[x] = false;
+}
+
+int main() {
+    cin >> target;
+
+    for (int i = 0; i < target.size(); i++) {
+        required_al[target[i] - 'A']++;
+    }
+
+    cin >> n;
+    for (int i = 0; i < n; i++) {
+        cin >> price[i];
+
+        cin >> name;
+        for (int j = 0; j < name.size(); j++) {
+            name_al[i][name[j] - 'A']++;
+        }
+    }
+
+    for (int i = 0; i < n; i++) {
+        back(i, 1, 0);
+    }
+
+    // 답안 출력
+    if (answer == 2e9) cout << -1 << '\n';
+    else cout << answer << '\n';
+}
