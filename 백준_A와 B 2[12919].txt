@@ -1,0 +1,38 @@
+// 백준 12919 : A와 B 2
+#include <vector>
+#include <string>
+#include <iostream>
+
+using namespace std;
+
+string S, T;
+int ans = 0;
+
+void solve(string str) 
+{
+	if (str.size() == S.size()) {
+		if (str == S) {
+			ans = 1;
+		}
+		return;
+	}
+
+	if (str[str.size() - 1] == 'A') solve(str.substr(0, str.size() - 1));
+
+	if (str[0] == 'B') {
+		for (int i = 0; i < str.size() / 2; i++) {
+			char tmp = str[i];
+			str[i] = str[(str.size()-1) - i];
+			str[(str.size()-1) - i] = tmp;
+		}
+		solve(str.substr(0, str.size() - 1));
+	}
+}
+
+int main() {
+	cin >> S >> T;
+
+	solve(T);
+
+	cout << ans << '\n';
+}
