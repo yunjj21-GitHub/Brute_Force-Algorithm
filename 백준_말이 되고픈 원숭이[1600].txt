@@ -1,0 +1,72 @@
+// 백준 1600 : 말이 되고픈 원숭이
+#include <iostream>
+#include <string>
+#include <queue>
+#include <vector>
+
+using namespace std;
+
+int hor_dx[8] = {-2, -1, 1, 2, -2, -1, 1, 2}; // 말의 움직임
+int hor_dy[8] = {-1, -2, -2, -1, 1, 2, 2, 1};
+int monk_dx[8] = {0, 0, 1, -1}; // 원숭이의 움직임
+int monk_dy[8] = {1, -1, 0, 0};
+
+int K;
+int W, H; // W : 가로길이, H : 세로길이
+int map[200][200];
+bool chk[31][200][200];
+
+int main() {
+	cin >> K;
+	cin >> W >> H;
+	for (int i = 0; i < H; i++) {
+		for (int j = 0; j < W; j++) {
+			cin >> map[i][j];
+		}
+	}
+
+	queue<vector<int>> q; // {y, x, k, depth}
+	q.push({ 0, 0, 0, 0});
+	while (!q.empty()) {
+		int y = q.front()[0];
+		int x = q.front()[1];
+		int k = q.front()[2];
+		int depth = q.front()[3];
+		q.pop();
+
+		if (y == (H - 1) && x == (W - 1)) {
+			cout << depth << '\n';
+			return 0;
+		}
+
+		if (k < K) {
+			// 말의 움직임으로
+			for (int i = 0; i < 8; i++) {
+				int nxtY = y + hor_dy[i];
+				int nxtX = x + hor_dx[i];
+
+				if (0 <= nxtY && nxtY < H && 0 <= nxtX && nxtX < W) {
+					if (map[nxtY][nxtX] != 1 && !chk[k+1][nxtY][nxtX]) {
+						q.push({ nxtY, nxtX, k + 1, depth + 1 });
+						chk[k+1][nxtY][nxtX] = true;
+					}
+				}
+			}
+		}
+
+		// 원숭이의 움직임으로
+		for (int i = 0; i < 4; i++) {
+			int nxtY = y + monk_dy[i];
+			int nxtX = x + monk_dx[i];
+
+			if (0 <= nxtY && nxtY < H && 0 <= nxtX && nxtX < W) {
+				if (map[nxtY][nxtX] != 1 && !chk[k][nxtY][nxtX]) {
+					q.push({ nxtY, nxtX, k, depth + 1 });
+					chk[k][nxtY][nxtX] = true;
+				}
+			}
+		}
+	}
+	cout << -1 << '\n';
+	return 0;
+}
