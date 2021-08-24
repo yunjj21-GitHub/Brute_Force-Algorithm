@@ -1,0 +1,64 @@
+// 백준 15661 : 링크와 스타트
+#include <iostream>
+#include <string>
+#include <vector>
+#include <cmath>
+
+using namespace std;
+
+int N;
+int S[20][20];
+bool grouping[20];
+int mini = 100000000; // 임의의 큰값
+
+void makeTeam(int idx) {
+	grouping[idx] = true;
+
+	vector<int> T1;
+	vector<int> T2;
+	for (int i = 0; i < N; i++) {
+		if (grouping[i] == 1) T1.push_back(i);
+		else T2.push_back(i);
+	}
+
+	// T1 능력치의 합을 구함
+	int T1_sum = 0;
+	for (int i = 0; i < T1.size(); i++) {
+		for (int j = 0; j < T1.size(); j++) {
+			T1_sum += S[T1[i]][T1[j]];
+		}
+	}
+
+	// T2 능력치의 합을 구함
+	int T2_sum = 0;
+	for (int i = 0; i < T2.size(); i++) {
+		for (int j = 0; j < T2.size(); j++) {
+			T2_sum += S[T2[i]][T2[j]];
+		}
+	}
+
+	// 팀 사이의 능력의 차이를 구함 (mini와 비교&갱신)
+	if (mini > abs(T1_sum - T2_sum)) mini = abs(T1_sum - T2_sum);
+
+	// 다음 경우의 수
+	for (int i = idx + 1; i < N; i++) {
+		makeTeam(i);
+		grouping[i] = false;
+	}
+}
+
+int main() {
+	cin >> N;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			cin >> S[i][j];
+		}
+	}
+
+	for (int i = 0; i < N; i++) {
+		makeTeam(i);
+		grouping[i] = false;
+	}
+
+	cout << mini << '\n';
+}
