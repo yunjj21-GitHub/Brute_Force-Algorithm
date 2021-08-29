@@ -1,0 +1,63 @@
+// 백준 1025 : 제곱수 찾기
+#include <vector>
+#include <string>
+#include <cmath>
+#include <iostream>
+
+using namespace std;
+
+int ans = -1;
+int n, m;
+int digit[20][20];
+
+// 들어온 숫자가 완전 제곱수인지 확인하는 함수
+int check(int num) {
+	// 0은 항상 완전 제곱수
+	if (num == 0 && ans == -1) {
+		ans = 0;
+	}
+
+	// num이 완전 제곱수라면
+	for (int i = 1; i * i <= num; i++) {
+		if (i * i == num) {
+			if (num > ans) ans = num;
+		}
+	}
+	return 0;
+}
+
+void makeNum(int y, int x, int dy, int dx, int num) {
+	int nxtY = y + dy;
+	int nxtX = x + dx;
+	if (1 <= nxtY && nxtY <= n && 1 <= nxtX && nxtX <= m) {
+		num = num * 10 + digit[nxtY][nxtX];
+		check(num);
+
+		makeNum(nxtY, nxtX, dy, dx, num);
+	}
+}
+
+int main() {
+	cin >> n >> m;
+	for (int y = 1; y <= n; y++) { // 열
+		for (int x = 1; x <= m; x++) { // 행
+			// 입력된 수를 한자리씩 받기 위함(scanf_s사용)
+			scanf("%1d", &digit[y][x]);
+		}
+	}
+
+	for (int y = 1; y <= n; y++) {
+		for (int x = 1; x <= m; x++) {
+			int num = digit[y][x];
+			check(num);
+		
+			for (int dy = -n; dy <= n; dy++) { // 열 등차
+				for (int dx = -m; dx <= m; dx++) { // 행 등차
+					if (dy == 0 && dx == 0) continue;
+					makeNum(y, x, dy, dx, num);
+				}
+			}
+		}
+	}
+	cout << ans << '\n';
+}
