@@ -1,0 +1,61 @@
+// 백준 15686 : 치킨 배달
+#include <vector>
+#include <string>
+#include <iostream>
+#include <cmath>
+
+using namespace std;
+
+int N, M;
+int map[50][50];
+vector<pair<int, int>> rest;
+vector<pair<int, int>> house;
+int ans = 100 * 100; // 임의의 큰 값
+
+void calculate(int t, int cnt, vector<int> result) {
+	// 탐색중인 치킨집과 모든 집과의 거리를 계산
+	for (int i = 0; i < house.size(); i++) {
+		int dy = abs(rest[t].first - house[i].first);
+		int dx = abs(rest[t].second - house[i].second);
+
+		if (result[i] == 0 || result[i] > dy + dx) { // 거리 갱신
+			result[i] = dy + dx;
+		}
+	}
+
+	if (cnt == M) { // 영업할 M개를 모두 택했다면
+		int sum = 0;
+		for (int i = 0; i < result.size(); i++) {
+			sum += result[i];
+		}
+		if (sum < ans) ans = sum; // 답안 갱신
+		return;
+	}
+
+	for (int i = t + 1; i < rest.size(); i++) {
+		calculate(i, cnt + 1, result);
+	}
+	return;
+}
+
+int main() {
+	cin >> N >> M;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			int input;
+			cin >> input;
+
+			if (input == 1) house.push_back({ i, j });
+			else if (input == 2) rest.push_back({ i, j });
+		}
+	}
+
+	// 완전탐색
+	for (int i = 0; i < rest.size(); i++) {
+		vector<int> result(house.size()); // 0으로 자동 초기화
+		calculate(i, 1, result);
+	}
+
+	// 답안 출력
+	cout << ans << '\n';
+}
