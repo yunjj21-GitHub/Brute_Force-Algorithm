@@ -1,0 +1,73 @@
+// 백준 21278 : 호석이 두 마리 치킨
+#include <vector>
+#include <string>
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+int N, M; // 건물의 개수 N, 도로의 개수 M
+int d[101][101]; // 각 건물간의 거리
+int INF = 1000000; // 임의의 큰 값
+vector<int> answer = { 0, 0, INF }; // 답안
+
+void floydWarshall() {
+	for (int k = 1; k <= N; k++) {
+		for (int i = 1; i <= N; i++) {
+			for (int j = 1; j <= N; j++) {
+				if (d[i][k] + d[k][j] < d[i][j]) {
+					d[i][j] = d[i][k] + d[k][j];
+				}
+			}
+		}
+	}
+}
+
+int main() {
+	cin >> N >> M;
+
+	// d배열 초기화
+	for (int i = 1; i <= N; i++) {
+		for (int j = 1; j <= N; j++) {
+			if (i == j) continue;
+			d[i][j] = INF;
+		}
+	}
+
+	// 도로 정보를 입력받음
+	for (int i = 0; i < M; i++) {
+		int a, b;
+		cin >> a >> b;
+		d[a][b] = 1;
+		d[b][a] = 1;
+	}
+
+	// 건물간의 거리를 최단거리로 갱신(플로이드 와샬)
+	floydWarshall();
+
+	// 완전탐색
+	for (int i = 1; i <= N; i++) { // 치킨집 1 택
+ 		for (int j = i+1; j <= N; j++) { // 치킨집 2 택
+			int result = 0;
+
+			for (int k = 1; k <= N; k++) {
+				// 각 집들과 더 가까운 치킨집과의 거리를 택
+				result += min(d[k][i], d[k][j]);
+			}
+			result *= 2; // 왕복 처리
+
+			// 답안 갱신
+			if (answer[2] > result) {
+				answer[0] = i;
+				answer[1] = j;
+				answer[2] = result;
+			}
+		}
+	}
+
+	// 답안 출력
+	for (int ans : answer) {
+		cout << ans << ' ';
+	}
+	cout << '\n';
+}
