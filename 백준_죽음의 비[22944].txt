@@ -1,0 +1,64 @@
+// 백준 22944 : 죽음의 비 (완전탐색 + 백트래킹)
+#include <vector>
+#include <string>
+#include <iostream>
+#include <cmath>
+
+using namespace std;
+
+int N, H, D; // 정사각형 한변의 길이 N, 현재 체력 H, 우산의 내구도 D;
+pair<int, int> S; // 현재의 위치
+vector<pair<int, int>> U; // 우산의 위치
+pair<int, int> E; // 안전지대 위치
+int INF = 10000000; // 임의의 큰 값
+int ans = INF;
+bool used[250000];
+
+void getUmbrella(int curY, int curX, int curH, int curD, int depth) {
+	// 우산을 얻은 뒤의 상황
+
+	// 안전지대까지 이동
+	if (abs(E.first - curY) + abs(E.second - curX) <= curH + curD) { // 도착지에 비가 내리지 않는다.
+		ans = min(ans, depth + abs(E.first - curY) + abs(E.second - curX));
+		return;
+	}
+
+	// 다음 우산까지 이동
+	for (int i = 0; i < U.size(); i++) {
+		if (used[i]) continue; // 이미 사용한 우산이라면
+
+		int damage = abs(U[i].first - curY) + abs(U[i].second - curX);
+		if (damage - 1 >= curH + curD) continue; // 도착지에 비가 내린다.
+
+		used[i] = true;
+
+		if (curD < damage - 1) { // 손상이 현재의 체력에도 영향을 미쳤던 경우
+			getUmbrella(U[i].first, U[i].second, curH - (damage - 1 - curD), D, depth + damage);
+		}
+		else { // 손상이 우산의 내구도에만 영향을 미쳤던 경우
+			getUmbrella(U[i].first, U[i].second, curH, D, depth + damage);
+		}
+
+		used[i] = false;
+	}
+}
+
+int main() {
+	cin >> N >> H >> D;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			char input;
+			cin >> input;
+			if (input == 'S') S = { i, j }; // {y, x}
+			else if (input == 'U') U.push_back({ i, j });
+			else if (input == 'E') E = { i, j };
+		}
+	}
+
+	D--; // 우산은 줍는 순간 내구도가 1감소 된다. (예 3참고)
+
+	getUmbrella(S.first, S.second, H, 0, 0);
+
+	if (ans == INF) cout << -1 << '\n';
+	else cout << ans << '\n';
+}
