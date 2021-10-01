@@ -1,22 +1,33 @@
 // 백준 17626 : Four Squares
-#include <vector>
 #include <string>
-#include <algorithm>
+#include <vector>
 #include <iostream>
 
 using namespace std;
 
-int main() {
-	int n;
-	cin >> n;
+int n;
+bool chk[50001]; // 사용할 인덱스 : 1~50000
 
-	int dp[50001] = { 0 };
-	dp[1] = 1;
-	for (int i = 1; i <= n; i++) {
-		dp[i] = dp[1] + dp[i - 1];
-		for (int j = 2; j*j<=i; j++) {
-			dp[i] = min(dp[i], 1 + dp[i - j * j]); 
+int pow(int k, int n) {
+	if (k == 1) return chk[n];
+
+	for (int i = 1; i * i <= n; i++) {
+		if (pow(k - 1, n - i * i)) return 1;
+	}
+	return 0;
+}
+
+int main() {
+	cin >> n;
+	for (int i = 1; i * i <= n; i++) {
+		chk[i * i] = true;
+	}
+
+	for (int i = 1; i <= 4; i++) {
+		if (pow(i, n)) {
+			cout << i << '\n';
+			break;
 		}
 	}
-	cout << dp[n] << endl;
+	return 0;
 }
